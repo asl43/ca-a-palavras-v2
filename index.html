@@ -501,6 +501,7 @@
     .difficulty-dificil{background:#ef4444;color:white}
     .difficulty-muito-dificil{background:#8b5cf6;color:white}
     .difficulty-extremo{background:#dc2626;color:white}
+    .difficulty-biblia{background:#3b82f6;color:white} /* NOVO ESTILO */
     .history-list{
         list-style:none;
         padding:0;
@@ -886,7 +887,7 @@
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRe-8oG7fyZEMjN6unJcw7QMFpzHOW6lg7dCgQrhX9D_uHq-IQMpbXLfIrTtKLBHxI/exec';
     const GAME_LEVELS = [
         { title: 'Infantil 1: Desenhos Animados', size: 10, words: ['MICKEY', 'ELSA', 'BOB', 'PEPPA', 'SONIC', 'PIKACHU', 'DORA', 'HULK'], difficulty: 'Infantil', color: '#ec4899', icon: '🎨', category: 'infantil' },
-        { title: 'Infantil 2: Super Heróis', size: 10, words: ['BATMAN', 'HOMEMARANHA', 'SUPERMAN', 'CAPITAO', 'MULHERMARAVILHA', 'FLASH', 'THOR', 'PANTERA'], difficulty: 'Infantil', color: '#ec4899', icon: '🦸', category: 'infantil' },
+        { title: 'Infantil 2: Super Heróis', size: 10, words: ['BATMAN', 'CHAPOLIN', 'SUPERMAN', 'CAPITAO', 'MAGNETO', 'FLASH', 'THOR', 'PANTERA'], difficulty: 'Infantil', color: '#ec4899', icon: '🦸', category: 'infantil' },
         { title: 'Infantil 3: Contos de Fadas', size: 11, words: ['CINDERELA', 'BRANCADENEVE', 'ARIEL', 'AURORA', 'FERA', 'PRINCESA', 'DRAGAO', 'CASTELO', 'MAGIA'], difficulty: 'Infantil', color: '#ec4899', icon: '👸', category: 'infantil' },
         { title: 'Brasil 1: Forças Armadas', size: 12, words: ['BRASIL', 'AMAZONAS', 'MANAUS', 'POLICIA', 'SEGURANCA', 'FORCA', 'PATENTE', 'ALERTA', 'VIATURA', 'PATRIA'], difficulty: 'Fácil', color: '#10b981', icon: '🛡️', category: 'brasil' },
         { title: 'Brasil 2: Estados', size: 12, words: ['ACRE', 'BAHIA', 'CEARA', 'GOIAS', 'PARANA', 'PERNAMBUCO', 'RIOGRANDE', 'SERGIPE', 'TOCANTINS', 'MARANHAO'], difficulty: 'Fácil', color: '#10b981', icon: '🇧🇷', category: 'brasil' },
@@ -898,6 +899,14 @@
         { title: 'Mundo 2: Países', size: 16, words: ['BRASIL', 'ARGENTINA', 'PORTUGAL', 'ESPANHA', 'ALEMANHA', 'ITALIA', 'FRANCA', 'JAPAO', 'CHINA', 'AUSTRALIA', 'CANADA', 'MEXICO', 'INDIA', 'RUSSIA'], difficulty: 'Difícil', color: '#ef4444', icon: '🗺️', category: 'mundo' },
         { title: 'Mundo 3: Idiomas', size: 17, words: ['PORTUGUES', 'INGLES', 'ESPANHOL', 'FRANCES', 'ALEMAO', 'ITALIANO', 'RUSSO', 'CHINES', 'JAPONES', 'ARABE', 'COREANO', 'GREGO', 'LATIM', 'HEBRAICO'], difficulty: 'Difícil', color: '#ef4444', icon: '🗣️', category: 'mundo' },
         { title: 'Mundo 4: Capitais', size: 17, words: ['LONDRES', 'PARIS', 'ROMA', 'BERLIM', 'TOKIO', 'PEQUIM', 'MOSCOU', 'OTTAWA', 'MEXICO', 'LIMA', 'SANTIAGO', 'BUENOSAIRES', 'CANBERRA', 'PRETORIA'], difficulty: 'Difícil', color: '#ef4444', icon: '🏙️', category: 'mundo' },
+        
+        // NOVOS NÍVEIS BÍBLIA
+        { title: 'Bíblia 1: Livros do Pentateuco', size: 15, words: ['GÊNESIS', 'ÊXODO', 'LEVÍTICO', 'NÚMEROS', 'DEUTERONÔMIO'], difficulty: 'Bíblia', color: '#3b82f6', icon: '📖', category: 'biblia' },
+        { title: 'Bíblia 2: Personagens do Velho Testamento', size: 17, words: ['ABRAÃO', 'MOISÉS', 'NOÉ', 'ISAQUE', 'JACÓ', 'JOSÉ', 'DAVI', 'ELIAS', 'RUTE'], difficulty: 'Bíblia', color: '#3b82f6', icon: '🧔', category: 'biblia' },
+        { title: 'Bíblia 3: Personagens do Novo Testamento', size: 18, words: ['JESUS', 'PAULO', 'PEDRO', 'JOÃO', 'MARIA', 'JUDAS', 'MATEUS', 'LUCAS', 'MARCOS', 'TITO'], difficulty: 'Bíblia', color: '#3b82f6', icon: '😇', category: 'biblia' },
+        { title: 'Bíblia 4: Cidades e Lugares', size: 19, words: ['JERUSALÉM', 'BELÉM', 'NAZARÉ', 'JERICÓ', 'GALILEIA', 'ISRAEL', 'JORDÃO', 'EGITO', 'EDEN'], difficulty: 'Bíblia', color: '#3b82f6', icon: '🕍', category: 'biblia' },
+        { title: 'Bíblia 5: Conceitos e Termos', size: 20, words: ['SALVAÇÃO', 'EVANGELHO', 'FÉ', 'GRAÇA', 'AMOR', 'ORAÇÃO', 'CÉU', 'INFERNO', 'LIVRO', 'PALAVRA'], difficulty: 'Bíblia', color: '#3b82f6', icon: '🙏', category: 'biblia' },
+
         { title: 'Natureza 1: Animais', size: 18, words: ['ELEFANTE', 'RINOCERONTE', 'HIPOPOTAMO', 'GIRAFA', 'LEOPARDO', 'CROCODILO', 'TUBARAO', 'AGUIA', 'PINGUIM', 'GOLFINHO', 'BORBOLETA', 'FORMIGA', 'CACHORRO', 'TARTARUGA'], difficulty: 'Muito Difícil', color: '#8b5cf6', icon: '🦁', category: 'natureza' },
         { title: 'Natureza 2: Flores', size: 18, words: ['ORQUIDEA', 'GIRASSOL', 'MARGARIDA', 'TULIPA', 'JASMIM', 'LAVANDA', 'HORTENCIA', 'AZALEIA', 'BEGONIA', 'CRISANTEMO', 'DALIA', 'GARDENIA', 'HIBISCO', 'PETUNIA'], difficulty: 'Muito Difícil', color: '#8b5cf6', icon: '🌺', category: 'natureza' },
         { title: 'Natureza 3: Clima', size: 19, words: ['TEMPESTADE', 'FURACAO', 'TSUNAMI', 'TERREMOTO', 'VULCAO', 'GEADA', 'TROVOADA', 'VENTANIA', 'CHUVA', 'SOL', 'NEVE', 'GRANIZO', 'NUVEM', 'ARCOIRIS', 'UMIDADE'], difficulty: 'Muito Difícil', color: '#8b5cf6', icon: '☀️', category: 'natureza' },
@@ -911,7 +920,7 @@
     let currentRowId = null; 
     let startTime = null;
     let timerInterval = null;
-    let currentUserName = 'Convidado';
+    let currentUserName = 'Convidado'; // Ajustado para 'Não Identificado' na função openGame
     let currentLevel = 0;
     let isPaused = false;
     let hintsRemaining = 3;
@@ -1312,6 +1321,7 @@
             brasil: { name: 'Brasil', icon: '🇧🇷', levels: [] },
             tecnologia: { name: 'Tecnologia', icon: '💻', levels: [] },
             mundo: { name: 'Mundo', icon: '🌍', levels: [] },
+            biblia: { name: 'Bíblia', icon: '🙏', levels: [] }, // NOVA CATEGORIA
             natureza: { name: 'Natureza', icon: '🌿', levels: [] },
             extremo: { name: 'Extremo', icon: '🔥', levels: [] }
         };
@@ -1370,7 +1380,7 @@
         // Reinicia a sessão de jogo (score e timer para o novo nível)
         resetGameSession();
         // Recria o grid e a lista de palavras para o novo nível
-        initGame(levelIndex);
+        initGame(currentLevel);
         showToast(`🎮 ${GAME_LEVELS[levelIndex].title} iniciado!`, 'success');
         sounds.click();
         
@@ -1441,6 +1451,8 @@
         `;
         overlay.appendChild(content);
         document.body.appendChild(overlay);
+        // Garante que o tutorial esteja visível por cima de tudo
+        overlay.style.zIndex = 1002;
     }
 
     function closeTutorial() {
@@ -1921,7 +1933,8 @@
         });
         
         $('openGameBtn').addEventListener('click', () => {
-            openGame('Convidado'); // Abre TELA 2. currentRowId será null.
+            // AJUSTE: Mudar a identificação para "Não Identificado"
+            openGame('Não Identificado'); // Abre TELA 2. currentRowId será null.
             sounds.click();
         });
 
@@ -1952,7 +1965,7 @@
 
     function openGame(nome){
         showScreen('gameScreen');
-        currentUserName = nome;
+        currentUserName = nome; // Nome do jogador é definido aqui
         currentLevel = 0;
         totalScore = 0; // Zera o score da sessão ao iniciar um novo jogo
         resetGameSession();
@@ -1968,7 +1981,7 @@
     function initGame(levelIndex){
         const level = GAME_LEVELS[levelIndex];
         GRID_SIZE = level.size;
-        WORDS = level.words;
+        WORDS = level.words.map(w => w.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
         $('gameTitle').textContent = level.title;
         $('levelDisplay').textContent = `Nível ${levelIndex + 1}`;
         found.clear();
@@ -2052,11 +2065,16 @@
     function renderWords(){
         const node = $('words');
         node.innerHTML = '';
-        for(const w of placedWords){
+        const currentLevelData = GAME_LEVELS[currentLevel];
+        // Renderiza palavras originais (com acentos) na lista, mas a lógica de busca usa a versão sem acentos
+        const wordsToDisplay = currentLevelData.words;
+        for(const w of wordsToDisplay){
+            // Cria um ID baseado na versão sem acentos para o controle da busca
+            const idKey = 'word_' + w.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
             const div = document.createElement('div');
             div.className = 'word';
-            div.textContent = w.word;
-            div.id = 'word_' + w.word;
+            div.textContent = w.toUpperCase();
+            div.id = idKey;
             node.appendChild(div);
         }
     }
@@ -2095,6 +2113,7 @@
                 const el = document.querySelector(`.cell[data-r='${rr}'][data-c='${cc}']`);
                 if(el) el.classList.add('found');
             }
+            // Usa a versão sem acentos para encontrar o elemento na lista
             const wel = $('word_' + pw.word);
             if(wel) wel.classList.add('found');
         }
