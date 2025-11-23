@@ -350,6 +350,10 @@
         background:linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
         color:white;
     }
+    .btn-skip{ /* NOVO ESTILO PARA O BOTÃO PULAR */
+        background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color:white;
+    }
     .toast{
         position:fixed;
         top:20px;
@@ -674,6 +678,37 @@
         align-items:center;
         gap:10px;
     }
+    /* NOVOS ESTILOS PARA AS TELAS */
+    .screen {
+        display: none; /* Inicia escondido */
+        width: 100%;
+        max-width: 900px;
+    }
+    .screen.active {
+        display: block; /* Ativa a tela */
+    }
+    .results-section h3 {
+        color: var(--primary);
+        border-bottom: 2px solid var(--border);
+        padding-bottom: 10px;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+    }
+    .results-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .results-buttons button {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
     @media (max-width:768px){
         .game-area{grid-template-columns:1fr;gap:20px}
         .grid{padding:10px}
@@ -690,6 +725,7 @@
         .modal{padding:20px;width:95%}
         .level-grid{grid-template-columns:1fr}
         .game-controls{justify-content:center;}
+        .results-buttons {flex-direction: column;}
     }
   </style>
 </head>
@@ -704,7 +740,8 @@
         <div class="counter">📊 Registros: <span id="totalCount">0</span></div>
       </div>
     </header>
-    <section class="card">
+
+    <section class="card screen active" id="registerScreen">
       <h2 style="margin-bottom:15px">📝 Registrar Participante</h2>
       <form id="cadForm">
         <div>
@@ -722,22 +759,26 @@
         <div class="full controls">
           <button type="submit" id="submitBtn">✨ Registrar e Iniciar Jogo</button>
           <button type="button" id="openGameBtn">🎮 Jogar Sem Registrar</button>
-          <button type="button" id="statsBtn">📊 Estatísticas</button>
-          <button type="button" id="historyBtn">📜 Ver Histórico</button>
-          <button type="button" id="clearBtn">🗑️ Limpar Dados</button>
         </div>
       </form>
       <div style="margin-top:20px;color:var(--muted);border-top:2px solid var(--border);padding-top:15px;font-size:0.9rem;">
         <strong>📌 Últimos registros:</strong> <span id="lastEntries">Nenhum ainda</span>
       </div>
     </section>
-    <section class="card" id="leaderboardCard">
+
+    <section class="card screen" id="leaderboardCard">
         <h2 style="margin-bottom:5px">🏆 Ranking Nacional de Líderes</h2>
         <div id="leaderboardStatus" style="color:var(--muted);font-size:0.9rem;margin-top:10px">Carregando ranking...</div>
         <ul id="leaderboardList" class="leaderboard-list"></ul>
         <button id="refreshLeaderboard" style="margin-top:15px;background:var(--accent);color:white;padding:10px 20px;border-radius:8px;width:100%;cursor:pointer">🔄 Atualizar Ranking</button>
+        <div class="controls" style="margin-top: 15px;">
+             <button type="button" id="statsBtnInitial" style="background:var(--warning);color:white">📊 Estatísticas</button>
+             <button type="button" id="historyBtnInitial" style="background:var(--primary);color:white">📜 Ver Histórico</button>
+             <button type="button" id="clearBtnInitial" style="background:var(--danger);color:white">🗑️ Limpar Dados</button>
+        </div>
     </section>
-    <section class="card" id="gameCard" style="display:none">
+
+    <section class="card screen" id="gameScreen">
         <div class="game-header">
             <div>
                 <h2 id="gameTitle">🎮 Caça-Palavras: Nível 1</h2>
@@ -751,7 +792,7 @@
                 <button class="btn-levels" id="levelsBtn">📋 Níveis</button>
                 <button class="btn-pause" id="pauseBtn">⏸️ Pausar</button>
                 <button class="btn-hint" id="hintBtn">💡 Dica (<span class="hint-count" id="hintCount">3</span>)</button>
-                <button class="btn-giveup" id="giveUpBtn">❌ Desistir do Nível</button>
+                <button class="btn-skip" id="skipLevelBtn">⏭️ Pular Nível</button> <button class="btn-giveup" id="giveUpBtn">❌ Desistir do Nível</button>
                 <button class="btn-end-game" id="endGameBtn">⏹️ Finalizar Jogo</button>
             </div>
         </div>
@@ -793,6 +834,47 @@
         </div>
       </div>
     </section>
+
+    <section class="card screen" id="resultsScreen">
+        <h2 style="font-size:2rem;text-align:center;margin-bottom:10px">🎉 FIM DE JOGO!</h2>
+
+        <div id="finalGameStats" style="text-align:center;margin-bottom:20px;padding:20px;background:rgba(16, 185, 129, 0.1);border-radius:15px;border:2px solid var(--success)">
+            <h3 style="color:var(--success);margin-bottom:10px">Seu Desempenho</h3>
+            <p style="font-size:1.1rem;font-weight:600">Pontos Totais da Sessão: <span style="color:var(--accent);font-size:1.5rem" id="finalSessionScore">0</span></p>
+            <p style="font-size:1.1rem;font-weight:600">Tempo de Último Nível: <span style="color:var(--accent);font-size:1.5rem" id="finalLastLevelTime">0.00s</span></p>
+        </div>
+
+        <div class="results-section">
+            <h3 style="display:flex;align-items:center;gap:10px">📊 Suas Estatísticas</h3>
+            <div id="resultsStatsGrid" class="stats-grid">
+                </div>
+            <div style="margin-top:30px">
+                <h4 style="color:var(--primary);margin-bottom:10px;font-size:1.2rem">🏆 Conquistas Desbloqueadas</h4>
+                <div id="resultsAchievementsDisplay" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"></div>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h3 style="display:flex;align-items:center;gap:10px">🏆 Ranking Nacional</h3>
+            <div id="resultsLeaderboardStatus" style="color:var(--muted);font-size:0.9rem;margin-top:10px">Carregando ranking...</div>
+            <ul id="resultsLeaderboardList" class="leaderboard-list"></ul>
+            <button id="refreshLeaderboardResults" style="margin-top:15px;background:var(--accent);color:white;padding:10px 20px;border-radius:8px;width:100%;cursor:pointer">🔄 Atualizar Ranking</button>
+        </div>
+
+        <div class="results-section">
+            <h3 style="display:flex;align-items:center;gap:10px">📜 Histórico de Partidas</h3>
+            <ul id="resultsHistoryList" class="history-list"></ul>
+            <button onclick="clearHistoryResults()" style="background:var(--danger);color:white;padding:10px 20px;border-radius:8px;cursor:pointer;width:100%;margin-top:15px">🗑️ Limpar Histórico Completo</button>
+        </div>
+
+        <div class="results-buttons">
+            <button style="background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white" onclick="startNewGameFromResults()">▶️ Novo Jogo</button>
+            <button style="background:var(--muted);color:white" onclick="showScreen('registerScreen')">🏠 Tela Inicial</button>
+        </div>
+    </section>
+
+    <div id="modalContainer"></div>
+
   </div>
   <script>
     const STORAGE_KEY = 'cadastros_ca';
@@ -849,6 +931,8 @@
     let placedWords = [];
     let selection = null;
     let found = new Set();
+    let lastLevelTimeTaken = 0; // Armazena o tempo do último nível
+    let hasCompletedLevelOne = false; // NOVA VARIÁVEL: Para controle do ranking
 
     const $ = id => document.getElementById(id);
     const sounds = {
@@ -885,6 +969,110 @@
             console.log('Áudio não suportado');
         }
     }
+
+    /* FLUXO DE TELAS */
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.classList.remove('active');
+        });
+        $(screenId).classList.add('active');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        if (screenId === 'registerScreen') {
+            stopTimer(); // Garante que o timer para na tela inicial
+            currentRowId = null; // Reseta o ID da sessão
+            // Recarrega o ranking sempre que volta para a tela inicial
+            loadLeaderboard();
+        }
+        if (screenId === 'resultsScreen') {
+            loadResultsScreen();
+        }
+    }
+
+    function loadResultsScreen() {
+        // 1. Estatísticas da Sessão
+        $('finalSessionScore').textContent = totalScore;
+        $('finalLastLevelTime').textContent = isZenMode ? '♾️ Zen' : `${lastLevelTimeTaken.toFixed(2)}s`;
+
+        // 2. Ranking Nacional - Só exibe se o Nível 1 tiver sido concluído na sessão atual ou em alguma anterior
+        const history = loadGameHistory();
+        hasCompletedLevelOne = history.some(g => g.level === 0 && g.completed);
+        
+        if (hasCompletedLevelOne) {
+             loadLeaderboard('results'); // Carrega ranking na tela de resultados
+        } else {
+            $('resultsLeaderboardStatus').textContent = '⚠️ Conclua o Nível 1 para entrar no Ranking Nacional!';
+            $('resultsLeaderboardList').innerHTML = '<li class="leaderboard-item">Ranking indisponível até a conclusão do primeiro nível.</li>';
+        }
+
+        // 3. Estatísticas Pessoais e Conquistas
+        const progress = loadProgress();
+        const totalGames = history.length;
+        const completedGames = history.filter(g => g.completed).length;
+        const totalTime = history.reduce((sum, g) => sum + (g.time || 0), 0);
+        const avgTime = totalGames > 0 ? (totalTime / totalGames).toFixed(2) : 0;
+        const bestTime = history.length > 0 ? Math.min(...history.filter(g => g.time > 0 && g.completed).map(g => g.time || 999)).toFixed(2) : 0;
+        const accuracy = totalSelections > 0 ? (correctSelections / totalSelections * 100).toFixed(1) : 100;
+        
+        // Renderizar Cards de Estatísticas
+        $('resultsStatsGrid').innerHTML = `
+            <div class="stat-card"><div class="stat-value">${totalGames}</div><div class="stat-label">Partidas Jogadas</div></div>
+            <div class="stat-card"><div class="stat-value">${completedGames}</div><div class="stat-label">Completadas</div></div>
+            <div class="stat-card"><div class="stat-value">${progress.totalScore || 0}</div><div class="stat-label">Pontos Total</div></div>
+            <div class="stat-card"><div class="stat-value">${avgTime}s</div><div class="stat-label">Tempo Médio</div></div>
+            <div class="stat-card"><div class="stat-value">${bestTime}s</div><div class="stat-label">Melhor Tempo</div></div>
+            <div class="stat-card"><div class="stat-value">${accuracy}%</div><div class="stat-label">Precisão</div></div>
+        `;
+        
+        // Renderizar Conquistas
+        if (achievements.length === 0) {
+            $('resultsAchievementsDisplay').innerHTML = '<div class="empty-state"><p style="color:var(--muted)">Jogue para desbloquear conquistas!</p></div>';
+        } else {
+            $('resultsAchievementsDisplay').innerHTML = achievements.map(ach => `<div class="achievement-badge">${ach.icon} ${ach.title}</div>`).join('');
+        }
+
+        // 4. Histórico de Partidas
+        const htmlHistory = history.slice(0, 10).map(game => { // Exibe os 10 mais recentes
+            const date = new Date(game.date);
+            const dateStr = date.toLocaleDateString('pt-BR');
+            const timeStr = date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+            const levelInfo = GAME_LEVELS[game.level] || GAME_LEVELS[0];
+            const completionClass = game.completed ? 'complete' : 'incomplete';
+            const completionText = game.completed ? '✅ Completo' : (game.foundWords > 0 ? '⚠️ Incompleto' : '❌ Desistiu');
+            return `
+                <li class="history-item ${completionClass}">
+                    <div class="history-icon">${game.completed ? '✅' : '❌'}</div>
+                    <div class="history-info">
+                        <h4>${levelInfo.title} (${game.playerName})</h4>
+                        <p>${game.foundWords}/${game.totalWords} palavras • ${game.score || 0} pts • ${completionText}
+                            ${game.zenMode ? ' • <span class="zen-badge" style="font-size:0.8rem;padding:3px 8px">🧘 Zen</span>' : ''}
+                        </p>
+                        <p style="font-size:0.85rem">${dateStr} às ${timeStr}</p>
+                    </div>
+                    <div class="history-time">${game.zenMode ? '♾️' : game.time ? game.time.toFixed(2) + 's' : '-'}</div>
+                </li>
+            `;
+        }).join('');
+        $('resultsHistoryList').innerHTML = htmlHistory || '<div class="empty-state"><p style="color:var(--muted)">Nenhuma partida registrada ainda.</p></div>';
+    }
+
+    function startNewGameFromResults() {
+        showScreen('gameScreen');
+        currentLevel = 0;
+        resetGameSession();
+        initGame(currentLevel);
+        showToast(`🎮 Novo Jogo iniciado!`, 'success');
+        sounds.levelUp();
+    }
+
+    // Adaptando funções que abriam modais para usar a tela de resultados ou novos modais simplificados
+    function clearHistoryResults() {
+        if (confirm('🗑️ Deseja realmente limpar todo o histórico de partidas?')) {
+            localStorage.removeItem(HISTORY_KEY);
+            showToast('🗑️ Histórico limpo com sucesso!', 'success');
+            loadResultsScreen(); // Recarrega a tela de resultados
+        }
+    }
+    /* FIM FLUXO DE TELAS */
 
     function loadTheme() {
         const isDark = localStorage.getItem(THEME_KEY) === 'true';
@@ -1009,7 +1197,7 @@
     function saveGameHistory(data) {
         try {
             const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-            history.unshift({...data, date: new Date().toISOString(), score: gameScore});
+            history.unshift({...data, date: new Date().toISOString()});
             if (history.length > 50) history.pop();
             localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
         } catch (e) {
@@ -1025,7 +1213,8 @@
         }
     }
 
-    function showHistoryModal() {
+    // Funções modais mantidas para Pausa e Seleção de Níveis, mas simplificadas/modificadas.
+    function loadHistoryModal() {
         const history = loadGameHistory();
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
@@ -1036,7 +1225,7 @@
             <button class="modal-close" onclick="closeModal('historyModal')">×</button>
             <h2>📜 Histórico de Partidas</h2>
             <div style="margin-bottom:15px;display:flex;gap:10px;justify-content:center">
-                <button onclick="clearHistory()" style="background:var(--danger);color:white;padding:8px 16px;border-radius:8px;cursor:pointer">🗑️ Limpar Histórico</button>
+                <button onclick="clearHistoryModal()" style="background:var(--danger);color:white;padding:8px 16px;border-radius:8px;cursor:pointer">🗑️ Limpar Histórico</button>
             </div>
             ${history.length === 0 ? `
                 <div class="empty-state">
@@ -1052,7 +1241,7 @@
                         const timeStr = date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
                         const levelInfo = GAME_LEVELS[game.level] || GAME_LEVELS[0];
                         const completionClass = game.completed ? 'complete' : 'incomplete';
-                        const completionText = game.completed ? '✅ Completo' : '❌ Desistiu';
+                        const completionText = game.completed ? '✅ Completo' : (game.foundWords > 0 ? '⚠️ Incompleto' : '❌ Desistiu');
                         return `
                             <li class="history-item ${completionClass}">
                                 <div class="history-icon">${game.completed ? '✅' : '❌'}</div>
@@ -1071,10 +1260,10 @@
             `}
         `;
         overlay.appendChild(modal);
-        document.body.appendChild(overlay);
+        $('modalContainer').appendChild(overlay);
     }
-
-    function clearHistory() {
+    
+    function clearHistoryModal() {
         if (confirm('🗑️ Deseja realmente limpar todo o histórico de partidas?')) {
             localStorage.removeItem(HISTORY_KEY);
             closeModal('historyModal');
@@ -1082,40 +1271,6 @@
         }
     }
 
-    function showStatsModal() {
-        const history = loadGameHistory();
-        const progress = loadProgress();
-        const totalGames = history.length;
-        const completedGames = history.filter(g => g.completed).length;
-        const totalTime = history.reduce((sum, g) => sum + (g.time || 0), 0);
-        const avgTime = totalGames > 0 ? (totalTime / totalGames).toFixed(2) : 0;
-        const bestTime = history.length > 0 ? Math.min(...history.filter(g => g.time > 0).map(g => g.time || 999)).toFixed(2) : 0;
-        const accuracy = totalSelections > 0 ? (correctSelections / totalSelections * 100).toFixed(1) : 100;
-        const overlay = document.createElement('div');
-        overlay.className = 'modal-overlay';
-        overlay.id = 'statsModal';
-        const modal = document.createElement('div');
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <button class="modal-close" onclick="closeModal('statsModal')">×</button>
-            <h2>📊 Suas Estatísticas</h2>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value">${totalGames}</div><div class="stat-label">Partidas Jogadas</div></div>
-                <div class="stat-card"><div class="stat-value">${completedGames}</div><div class="stat-label">Completadas</div></div>
-                <div class="stat-card"><div class="stat-value">${progress.totalScore || 0}</div><div class="stat-label">Pontos Total</div></div>
-                <div class="stat-card"><div class="stat-value">${avgTime}s</div><div class="stat-label">Tempo Médio</div></div>
-                <div class="stat-card"><div class="stat-value">${bestTime}s</div><div class="stat-label">Melhor Tempo</div></div>
-                <div class="stat-card"><div class="stat-value">${accuracy}%</div><div class="stat-label">Precisão</div></div>
-            </div>
-            <div style="margin-top:30px">
-                <h3 style="color:var(--primary);margin-bottom:15px">🏆 Conquistas Desbloqueadas</h3>
-                ${achievements.length === 0 ? `<div class="empty-state"><p style="color:var(--muted)">Jogue para desbloquear conquistas!</p></div>` : 
-                    `<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">${achievements.map(ach => `<div class="achievement-badge">${ach.icon} ${ach.title}</div>`).join('')}</div>`}
-            </div>
-        `;
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-    }
 
     function saveProgress() {
         try {
@@ -1145,6 +1300,7 @@
             sounds.error();
             return;
         }
+        pauseGame(); // Pausa o jogo ao abrir o seletor
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.id = 'levelModal';
@@ -1202,15 +1358,30 @@
             }).join('')}
         `;
         overlay.appendChild(modal);
-        document.body.appendChild(overlay);
+        $('modalContainer').appendChild(overlay);
     }
 
     function selectLevel(levelIndex) {
         closeModal('levelModal');
+        // Finaliza o jogo atual antes de iniciar um novo
+        handleLevelEnd(false, true); // true para 'changingLevel'
+        
         currentLevel = levelIndex;
+        // Reinicia a sessão de jogo (score e timer para o novo nível)
+        resetGameSession();
+        // Recria o grid e a lista de palavras para o novo nível
         initGame(levelIndex);
         showToast(`🎮 ${GAME_LEVELS[levelIndex].title} iniciado!`, 'success');
         sounds.click();
+        
+        // Garante que o timer inicie/continue (se não estiver em modo zen)
+        if (!isZenMode) startTimer();
+
+        // Se o nível selecionado não for o primeiro, o currentRowId é resetado 
+        // para evitar o envio de pontuação de ranking (que só vale para o Nível 1).
+        if (currentLevel !== 0) {
+            currentRowId = null;
+        }
     }
 
     function toggleZenMode(enabled) {
@@ -1236,7 +1407,7 @@
     }
 
     window.closeModal = closeModal;
-    window.clearHistory = clearHistory;
+    window.clearHistoryModal = clearHistoryModal;
     window.selectLevel = selectLevel;
     window.toggleZenMode = toggleZenMode;
 
@@ -1300,7 +1471,10 @@
           body: JSON.stringify(data)
         });
         console.log('Dados enviados com sucesso');
-        return { status: 'success', message: 'Enviado' };
+        // Como o modo é 'no-cors', a resposta real não pode ser lida, mas assumimos sucesso.
+        // Se precisar do rowId, é necessário configurar o App Script para usar ContentService e retornar JSON.
+        // A lógica de rowId do código original é mantida por garantia, mas pode falhar em 'no-cors'.
+        return data.type === 'registerAndGame' ? { status: 'success', message: 'Enviado', rowId: Math.random().toString(36).substring(2, 9) } : { status: 'success', message: 'Enviado' };
       } catch (error) {
         console.error('Erro ao enviar dados:', error);
         showToast('⚠️ Erro ao enviar para planilha (verifique console)', 'error');
@@ -1337,15 +1511,28 @@
       }
     }
 
-    async function loadLeaderboard(){
-        $('leaderboardStatus').textContent = '⏳ Carregando ranking...';
-        $('leaderboardList').innerHTML = '<li class="leaderboard-item">Carregando...</li>';
+    async function loadLeaderboard(target = 'initial'){
+        // Lógica de ranking: Só exibe se o Nível 1 tiver sido concluído em algum momento.
+        const history = loadGameHistory();
+        hasCompletedLevelOne = history.some(g => g.level === 0 && g.completed);
+
+        const statusEl = target === 'initial' ? $('leaderboardStatus') : $('resultsLeaderboardStatus');
+        const listEl = target === 'initial' ? $('leaderboardList') : $('resultsLeaderboardList');
+        
+        if (!hasCompletedLevelOne) {
+            statusEl.textContent = '⚠️ Conclua o Nível 1 para entrar no Ranking Nacional!';
+            listEl.innerHTML = '<li class="leaderboard-item">Ranking indisponível até a conclusão do primeiro nível.</li>';
+            return;
+        }
+
+        statusEl.textContent = '⏳ Carregando ranking...';
+        listEl.innerHTML = '<li class="leaderboard-item">Carregando...</li>';
         try {
             const response = await fetch(APPS_SCRIPT_URL + '?type=getLeaderboard');
             const data = await response.json();
             if(data.leaderboard && data.leaderboard.length > 0) {
-                $('leaderboardStatus').textContent = '🏆 Top Jogadores do Brasil';
-                $('leaderboardList').innerHTML = data.leaderboard.map((player, index) => `
+                statusEl.textContent = '🏆 Top Jogadores do Brasil';
+                listEl.innerHTML = data.leaderboard.map((player, index) => `
                     <li class="leaderboard-item">
                         <span class="name">${index + 1}º - ${player.nome}</span>
                         <div>
@@ -1355,13 +1542,13 @@
                     </li>
                 `).join('');
             } else {
-                $('leaderboardStatus').textContent = '🎮 Nenhum jogador ainda';
-                $('leaderboardList').innerHTML = '<li class="leaderboard-item">Seja o primeiro a completar um nível!</li>';
+                statusEl.textContent = '🎮 Nenhum jogador ainda';
+                listEl.innerHTML = '<li class="leaderboard-item">Seja o primeiro a completar um nível!</li>';
             }
         } catch (error) {
             console.error('Erro ao carregar ranking:', error);
-            $('leaderboardStatus').textContent = '📊 Ranking em Construção';
-            $('leaderboardList').innerHTML = '<li class="leaderboard-item">O ranking será atualizado após os primeiros jogos. Continue jogando!</li>';
+            statusEl.textContent = '📊 Ranking em Construção';
+            listEl.innerHTML = '<li class="leaderboard-item">O ranking será atualizado após os primeiros jogos. Continue jogando!</li>';
         }
     }
 
@@ -1448,7 +1635,7 @@
                 <button style="padding:15px 40px;font-size:1.1rem;background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white;border:none;border-radius:12px;cursor:pointer" onclick="resumeGame()">▶️ Continuar Jogo</button>
             </div>
         `;
-        document.body.appendChild(overlay);
+        $('modalContainer').appendChild(overlay);
         $('pauseBtn').textContent = '▶️ Continuar';
         sounds.click();
     }
@@ -1463,8 +1650,129 @@
         showToast('▶️ Jogo retomado!', 'success');
         sounds.click();
     }
+    
+    // NOVA FUNÇÃO para lidar com o fim de um nível (completo, desistido ou pulado)
+    function handleLevelEnd(completed, changingLevel = false) {
+        stopTimer();
+        const timeTakenSeconds = isZenMode ? 0 : ((Date.now() - startTime) / 1000);
+        lastLevelTimeTaken = timeTakenSeconds;
+        
+        const currentLevelData = GAME_LEVELS[currentLevel];
+        const levelScore = completed ? calculateScore(timeTakenSeconds, 3 - hintsRemaining, currentLevel) : 0;
+        
+        if (completed) {
+            updateScore(levelScore);
+            checkAchievements();
+            if (currentLevel + 1 > unlockedLevels) {
+                unlockedLevels = currentLevel + 1;
+                saveProgress();
+            }
+        }
+        
+        saveGameHistory({
+            level: currentLevel,
+            playerName: currentUserName,
+            foundWords: found.size,
+            totalWords: placedWords.length,
+            time: timeTakenSeconds,
+            completed: completed,
+            zenMode: isZenMode,
+            score: levelScore // Pontos ganhos neste nível
+        });
+        
+        // Lógica de envio para o Ranking (Google Sheets): SOMENTE para o Nível 1 CONCLUÍDO
+        if (completed && currentLevel === 0 && currentRowId && !isZenMode) {
+            const gameData = {
+                type: 'gameFinished',
+                rowId: currentRowId,
+                foundCount: found.size,
+                timeTakenSeconds: parseFloat(timeTakenSeconds.toFixed(2)),
+                playerName: currentUserName,
+                score: totalScore, // Score total da sessão
+                completed: true
+            };
+            console.log('Enviando resultado do Nível 1 CONCLUÍDO para o Ranking:', gameData);
+            postData(gameData).then(() => {
+                loadLeaderboard();
+            }).catch(err => {
+                console.error('Erro ao enviar resultado:', err);
+            });
+            currentRowId = null; // Encerra a sessão de registro para o ranking
+            hasCompletedLevelOne = true; // Define para que o ranking possa ser visualizado
+        } else if (!completed && currentLevel === 0 && currentRowId) {
+            // Se desistiu/pulou do Nível 1 antes de terminar, também encerra a sessão
+            currentRowId = null;
+        }
+
+        // Se estiver apenas mudando de nível, não mostra a tela de resultados/fim
+        if (!changingLevel) {
+            setTimeout(() => {
+                showScreen('resultsScreen');
+            }, 1000);
+        }
+    }
+
+    function skipLevel() {
+        if (isPaused) return;
+        if (!confirm('⏭️ Tem certeza que deseja pular este nível? Você não receberá pontos!')) {
+            return;
+        }
+        
+        // 1. Finaliza o nível atual (sem pontuar e sem marcar como concluído)
+        handleLevelEnd(false, true); // true para 'changingLevel'
+        
+        // 2. Tenta ir para o próximo nível
+        const nextLevel = currentLevel + 1;
+        if (nextLevel < GAME_LEVELS.length) {
+            currentLevel = nextLevel;
+             if(currentLevel >= unlockedLevels) {
+                unlockedLevels = currentLevel + 1;
+                saveProgress();
+            }
+            initGame(currentLevel);
+            resetGameSession(); // Reseta score do nível, combo, etc.
+            showToast(`⏭️ Nível pulado. Iniciando Nível ${currentLevel + 1}!`, 'warning');
+            sounds.click();
+        } else {
+            showToast(`🎉 Você pulou todos os níveis. Fim de Jogo!`, 'success');
+            sounds.levelUp();
+            // Vai para a tela de resultados
+            setTimeout(() => {
+                showScreen('resultsScreen');
+            }, 2000);
+        }
+    }
+
+    function giveUpGame() {
+        if (isPaused) return;
+        if (!confirm('❌ Tem certeza que deseja desistir deste nível? Você perderá o progresso do nível!')) {
+            return;
+        }
+        
+        // 1. Finaliza o nível atual (sem pontuar e sem marcar como concluído)
+        handleLevelEnd(false, false); // false para 'changingLevel'
+
+        // 2. Vai para a tela de resultados/seleção de nível
+        showToast(`❌ Nível desistido. Veja seus resultados.`, 'error');
+        sounds.error();
+    }
+
+    function endGame() {
+        if (isPaused) return;
+        if (!confirm('⏹️ Deseja finalizar o jogo e retornar para a tela de resultados?')) {
+            return;
+        }
+        
+        // 1. Finaliza o nível atual (sem pontuar e sem marcar como concluído)
+        handleLevelEnd(false, false); // false para 'changingLevel'
+
+        showToast('⏹️ Jogo finalizado. Resultados!', 'success');
+        sounds.click();
+    }
+
 
     function giveHint(){
+        if(isPaused) return;
         if(hintsRemaining <= 0){
             showToast('⚠️ Sem dicas disponíveis!', 'warning');
             sounds.error();
@@ -1494,83 +1802,6 @@
         }
     }
 
-    function giveUpGame() {
-        if (!confirm('❌ Tem certeza que deseja desistir deste nível? Você não receberá pontos!')) {
-            return;
-        }
-        stopTimer();
-        const timeTakenSeconds = isZenMode ? 0 : ((Date.now() - startTime) / 1000);
-        saveGameHistory({
-            level: currentLevel,
-            playerName: currentUserName,
-            foundWords: found.size,
-            totalWords: placedWords.length,
-            time: timeTakenSeconds,
-            completed: false,
-            zenMode: isZenMode,
-            score: 0
-        });
-        if (currentRowId && !isZenMode) {
-            postData({
-                type: 'gameFinished',
-                rowId: currentRowId,
-                foundCount: found.size,
-                timeTakenSeconds: parseFloat(timeTakenSeconds.toFixed(2)),
-                playerName: currentUserName,
-                score: 0,
-                completed: false
-            }).then(() => loadLeaderboard());
-        }
-        showToast(`❌ Nível desistido.`, 'error');
-        sounds.error();
-        setTimeout(() => {
-            currentLevel = Math.min(currentLevel + 1, GAME_LEVELS.length - 1);
-            if (currentLevel >= unlockedLevels) {
-                unlockedLevels = currentLevel + 1;
-                saveProgress();
-            }
-            initGame(currentLevel);
-            resetGameSession();
-        }, 1500);
-    }
-
-    function endGame() {
-        if (!confirm('⏹️ Deseja finalizar o jogo e retornar à tela inicial?')) {
-            return;
-        }
-        stopTimer();
-        const timeTakenSeconds = isZenMode ? 0 : ((Date.now() - startTime) / 1000);
-        saveGameHistory({
-            level: currentLevel,
-            playerName: currentUserName,
-            foundWords: found.size,
-            totalWords: placedWords.length,
-            time: timeTakenSeconds,
-            completed: false,
-            zenMode: isZenMode,
-            score: gameScore
-        });
-
-        // Enviar dados para o Sheets mesmo que não tenha completado
-        if (currentRowId && !isZenMode) {
-            postData({
-                type: 'gameFinished',
-                rowId: currentRowId,
-                foundCount: found.size,
-                timeTakenSeconds: parseFloat(timeTakenSeconds.toFixed(2)),
-                playerName: currentUserName,
-                score: gameScore,
-                completed: false
-            }).then(() => loadLeaderboard());
-        }
-
-        $('gameCard').style.display = 'none';
-        $('cadForm').reset();
-        $('datetime').value = nowLocalDateTimeForInput();
-        showToast('⏹️ Jogo finalizado. Obrigado por jogar!', 'success');
-        sounds.click();
-    }
-
     function resetGameSession() {
         hintsRemaining = 3;
         gameScore = 0;
@@ -1588,7 +1819,7 @@
     }
 
     document.addEventListener('keydown', (e) => {
-        if(!$('gameCard') || $('gameCard').style.display === 'none') return;
+        if(!$('gameScreen') || !$('gameScreen').classList.contains('active')) return;
         if(e.key === 'Escape') {
             e.preventDefault();
             if(isPaused) resumeGame();
@@ -1605,7 +1836,7 @@
     });
 
     document.addEventListener('visibilitychange', () => {
-        if(document.hidden && !isPaused && $('gameCard').style.display !== 'none') {
+        if(document.hidden && !isPaused && $('gameScreen').classList.contains('active')) {
             pauseGame();
         }
     });
@@ -1619,16 +1850,33 @@
         $('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
         $('datetime').value = nowLocalDateTimeForInput();
         updateUIEntries();
-        loadLeaderboard();
+        loadLeaderboard(); // Carrega ranking inicial
+
         if(!localStorage.getItem('tutorial_shown')) {
             setTimeout(showTutorial, 1000);
         }
+
+        // Event Listeners Globais
         $('themeToggle').addEventListener('click', toggleTheme);
         $('soundToggle').addEventListener('click', toggleSound);
         $('fullscreenToggle').addEventListener('click', toggleFullscreen);
-        $('historyBtn').addEventListener('click', showHistoryModal);
-        $('statsBtn').addEventListener('click', showStatsModal);
-        $('refreshLeaderboard').addEventListener('click', loadLeaderboard);
+
+        // Event Listeners TELA INICIAL/REGISTRO
+        $('historyBtnInitial').addEventListener('click', loadHistoryModal);
+        $('statsBtnInitial').addEventListener('click', () => showScreen('resultsScreen'));
+        $('clearBtnInitial').addEventListener('click', () => {
+             if(confirm('❌ Apagar todos os registros do navegador?')){
+                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(PROGRESS_KEY);
+                localStorage.removeItem(HISTORY_KEY);
+                updateUIEntries();
+                showToast('🗑️ Dados locais removidos', 'success');
+                sounds.click();
+                loadResultsScreen(); // Recarrega tela de resultados para refletir a limpeza
+             }
+        });
+        $('refreshLeaderboard').addEventListener('click', () => loadLeaderboard('initial'));
+        
         $('cadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nome = $('nome').value.trim();
@@ -1657,57 +1905,62 @@
                     console.log('ID da linha recebido:', currentRowId);
                     showToast('✅ Dados enviados! Jogo iniciado!', 'success');
                 } else {
+                    // Simulação para o caso de no-cors, onde o ID não retorna
+                    currentRowId = `local_${Date.now()}`;
                     showToast('⚠️ Dados salvos localmente. Verifique planilha.', 'warning');
                 }
             } catch(error) {
                 console.error('Erro ao enviar dados:', error);
                 showToast('⚠️ Erro no envio. Dados salvos localmente.', 'warning');
+                currentRowId = `local_${Date.now()}`; // Garante um ID local para o Nível 1
             }
-            openGame(nome);
+            openGame(nome); // Abre TELA 2
             $('cadForm').reset();
             $('datetime').value = nowLocalDateTimeForInput();
             if(soundEnabled) sounds.success();
         });
+        
         $('openGameBtn').addEventListener('click', () => {
-            openGame('Convidado');
+            openGame('Convidado'); // Abre TELA 2. currentRowId será null.
             sounds.click();
         });
-        $('clearBtn').addEventListener('click', () => {
-            if(confirm('❌ Apagar todos os registros do navegador?')){
-                localStorage.removeItem(STORAGE_KEY);
-                updateUIEntries();
-                showToast('🗑️ Dados locais removidos', 'success');
-                sounds.click();
-            }
-        });
+
+        // Event Listeners TELA JOGO
         $('pauseBtn').addEventListener('click', () => {
             if(isPaused) resumeGame();
             else pauseGame();
         });
         $('hintBtn').addEventListener('click', giveHint);
+        $('skipLevelBtn').addEventListener('click', skipLevel); // NOVO LISTENER
         $('giveUpBtn').addEventListener('click', giveUpGame);
         $('endGameBtn').addEventListener('click', endGame);
         $('levelsBtn').addEventListener('click', () => {
             showLevelSelector();
             sounds.click();
         });
+
+        // Event Listeners TELA RESULTADOS
+        $('refreshLeaderboardResults').addEventListener('click', () => loadLeaderboard('results'));
+
+        // Configuração inicial para mostrar a TELA 1
+        showScreen('registerScreen');
     });
 
     window.resumeGame = resumeGame;
+    window.startNewGameFromResults = startNewGameFromResults;
+    window.showScreen = showScreen;
 
     function openGame(nome){
-        $('gameCard').style.display = 'block';
+        showScreen('gameScreen');
         currentUserName = nome;
         currentLevel = 0;
+        totalScore = 0; // Zera o score da sessão ao iniciar um novo jogo
         resetGameSession();
         sessionStart = Date.now();
         if (isZenMode) $('zenBadge').style.display = 'inline-flex';
         startTimer();
         initGame(currentLevel);
         displayAchievements();
-        setTimeout(() => {
-            window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
-        }, 100);
         showToast('🎮 Jogo iniciado! Boa sorte!', 'success');
         sounds.levelUp();
     }
@@ -1737,10 +1990,7 @@
         updateFoundCount();
         updateProgressBar();
         updateAccuracy();
-        if(levelIndex === 0){
-            pausedTime = 0;
-            startTimer();
-        }
+        // A lógica de iniciar o timer está em `resetGameSession` e `selectLevel`
     }
 
     function placeWord(word){
@@ -1931,12 +2181,10 @@
     }
 
     function moveToNextLevel(){
+        handleLevelEnd(true, true); // Nível concluído, mudando de nível
+
         currentLevel++;
         if(currentLevel < GAME_LEVELS.length){
-            if(currentLevel >= unlockedLevels) {
-                unlockedLevels = currentLevel + 1;
-                saveProgress();
-            }
             showToast(`🎉 Nível ${currentLevel} completo! Partiu Nível ${currentLevel + 1}!`, 'success');
             createConfetti();
             sounds.levelUp();
@@ -1949,50 +2197,18 @@
             createConfetti();
             sounds.levelUp();
             stopTimer();
+            // Vai para a tela de resultados
             setTimeout(() => {
-                showStatsModal();
+                showScreen('resultsScreen');
             }, 2000);
         }
     }
 
     function checkWin(){
         if(found.size >= placedWords.length){
-            const timeTakenSeconds = isZenMode ? 0 : ((Date.now() - startTime) / 1000);
-            const levelScore = calculateScore(timeTakenSeconds, 3 - hintsRemaining, currentLevel);
-            updateScore(levelScore);
-            checkAchievements();
-            saveGameHistory({
-                level: currentLevel,
-                playerName: currentUserName,
-                foundWords: found.size,
-                totalWords: placedWords.length,
-                time: timeTakenSeconds,
-                completed: true,
-                zenMode: isZenMode,
-                score: gameScore
-            });
-            if(currentLevel === 0 && currentRowId && !isZenMode){
-                const gameData = {
-                    type: 'gameFinished',
-                    rowId: currentRowId,
-                    foundCount: found.size,
-                    timeTakenSeconds: parseFloat(timeTakenSeconds.toFixed(2)),
-                    playerName: currentUserName,
-                    score: gameScore,
-                    completed: true
-                };
-                console.log('Enviando resultado do jogo:', gameData);
-                postData(gameData).then(() => {
-                    loadLeaderboard();
-                }).catch(err => {
-                    console.error('Erro ao enviar resultado:', err);
-                });
-                currentRowId = null;
-            }
             setTimeout(moveToNextLevel, 1000);
         }
     }
   </script>
 </body>
 </html>
-
