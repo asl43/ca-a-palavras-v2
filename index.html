@@ -1,10 +1,26 @@
-<!doctype html>
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body {
+                  background-color: white; /* Ensure the iframe has a white background */
+                }
+    
+                
+              </style>
+                        </head>
+                        <body>
+                            <!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Caça-Palavras Premium + Ranking Nacional</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="manifest" href="#inline-manifest">
   <style>
     :root{
         --bg:#f8fafc;
@@ -20,6 +36,19 @@
         --gradient-start:#667eea;
         --gradient-end:#764ba2;
         --text:#1e293b;
+    }
+    @media (prefers-contrast: high) {
+        :root {
+            --bg: #ffffff;
+            --card: #f0f0f0;
+            --primary: #000000;
+            --text: #000000;
+            --border: #000000;
+            --accent: #0000ff;
+            --success: #008000;
+            --warning: #ff8c00;
+            --danger: #ff0000;
+        }
     }
     body.dark-mode {
         --bg:#0f172a;
@@ -219,7 +248,10 @@
         transition:all 0.3s ease;
         cursor:default;
     }
-    .word:hover{transform:translateY(-2px)}
+    .word:hover{
+        transform:translateY(-2px);
+        outline: 2px solid var(--accent);
+    }
     .word.found{
         background:var(--success);
         color:#fff;
@@ -350,8 +382,12 @@
         background:linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
         color:white;
     }
-    .btn-skip{ /* NOVO ESTILO PARA O BOTÃO PULAR */
+    .btn-skip{
         background:linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color:white;
+    }
+    .btn-share{
+        background:linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
         color:white;
     }
     .toast{
@@ -501,7 +537,7 @@
     .difficulty-dificil{background:#ef4444;color:white}
     .difficulty-muito-dificil{background:#8b5cf6;color:white}
     .difficulty-extremo{background:#dc2626;color:white}
-    .difficulty-biblia{background:#3b82f6;color:white} /* NOVO ESTILO */
+    .difficulty-biblia{background:#3b82f6;color:white}
     .history-list{
         list-style:none;
         padding:0;
@@ -679,14 +715,13 @@
         align-items:center;
         gap:10px;
     }
-    /* NOVOS ESTILOS PARA AS TELAS */
     .screen {
-        display: none; /* Inicia escondido */
+        display: none;
         width: 100%;
         max-width: 900px;
     }
     .screen.active {
-        display: block; /* Ativa a tela */
+        display: block;
     }
     .results-section h3 {
         color: var(--primary);
@@ -709,7 +744,18 @@
         font-weight: 700;
         cursor: pointer;
     }
-
+    .stars {
+        color: #fbbf24;
+        font-size: 1.2rem;
+        letter-spacing: 2px;
+        margin-top: 5px;
+    }
+    #rankInfo {
+        font-size: 1.1rem;
+        color: var(--accent);
+        font-weight: 700;
+        margin-top: 10px;
+    }
     @media (max-width:768px){
         .game-area{grid-template-columns:1fr;gap:20px}
         .grid{padding:10px}
@@ -741,7 +787,6 @@
         <div class="counter">📊 Registros: <span id="totalCount">0</span></div>
       </div>
     </header>
-
     <section class="card screen active" id="registerScreen">
       <h2 style="margin-bottom:15px">📝 Registrar Participante</h2>
       <form id="cadForm">
@@ -757,6 +802,9 @@
           <label for="datetime">📅 Data e hora (Registro)</label>
           <input id="datetime" name="datetime" type="datetime-local" required />
         </div>
+        <div class="full" style="margin-top:10px;color:var(--muted);font-size:0.85rem;">
+          <p>🔒 Seus dados são usados apenas para exibição no ranking. Não compartilhamos com terceiros.</p>
+        </div>
         <div class="full controls">
           <button type="submit" id="submitBtn">✨ Registrar e Iniciar Jogo</button>
           <button type="button" id="openGameBtn">🎮 Jogar Sem Registrar</button>
@@ -766,11 +814,10 @@
         <strong>📌 Últimos registros:</strong> <span id="lastEntries">Nenhum ainda</span>
       </div>
     </section>
-
     <section class="card screen" id="leaderboardCard">
         <h2 style="margin-bottom:5px">🏆 Ranking Nacional de Líderes</h2>
-        <div id="leaderboardStatus" style="color:var(--muted);font-size:0.9rem;margin-top:10px">Carregando ranking...</div>
-        <ul id="leaderboardList" class="leaderboard-list"></ul>
+        <div id="leaderboardStatus" style="color:var(--muted);font-size:0.9rem;margin-top:10px" aria-live="polite">Carregando ranking...</div>
+        <ul id="leaderboardList" class="leaderboard-list" aria-live="polite"></ul>
         <button id="refreshLeaderboard" style="margin-top:15px;background:var(--accent);color:white;padding:10px 20px;border-radius:8px;width:100%;cursor:pointer">🔄 Atualizar Ranking</button>
         <div class="controls" style="margin-top: 15px;">
              <button type="button" id="statsBtnInitial" style="background:var(--warning);color:white">📊 Estatísticas</button>
@@ -778,7 +825,6 @@
              <button type="button" id="clearBtnInitial" style="background:var(--danger);color:white">🗑️ Limpar Dados</button>
         </div>
     </section>
-
     <section class="card screen" id="gameScreen">
         <div class="game-header">
             <div>
@@ -793,8 +839,10 @@
                 <button class="btn-levels" id="levelsBtn">📋 Níveis</button>
                 <button class="btn-pause" id="pauseBtn">⏸️ Pausar</button>
                 <button class="btn-hint" id="hintBtn">💡 Dica (<span class="hint-count" id="hintCount">3</span>)</button>
-                <button class="btn-skip" id="skipLevelBtn">⏭️ Pular Nível</button> <button class="btn-giveup" id="giveUpBtn">❌ Desistir do Nível</button>
+                <button class="btn-skip" id="skipLevelBtn">⏭️ Pular Nível</button>
+                <button class="btn-giveup" id="giveUpBtn">❌ Desistir do Nível</button>
                 <button class="btn-end-game" id="endGameBtn">⏹️ Finalizar Jogo</button>
+                <button class="btn-share" id="shareResultsBtn">📤 Compartilhar</button>
             </div>
         </div>
         <div class="progress-bar">
@@ -807,15 +855,15 @@
             </div>
             <div class="stat-badge">
                 <span>⏱️</span>
-                <span id="timeDisplay">0.00s</span>
+                <span id="timeDisplay" aria-live="polite">0.00s</span>
             </div>
             <div class="stat-badge">
                 <span>✅</span>
-                <span id="foundCount">0 / 0</span>
+                <span id="foundCount" aria-live="polite">0 / 0</span>
             </div>
             <div class="stat-badge">
                 <span>📈</span>
-                <span id="accuracyDisplay">100%</span>
+                <span id="accuracyDisplay" aria-live="polite">100%</span>
             </div>
         </div>
       <div class="game-area">
@@ -824,71 +872,64 @@
         </div>
         <div style="min-width:220px">
           <strong style="font-size:1.1rem;color:var(--primary)">📝 Palavras a Encontrar</strong>
-          <div id="words" class="words-list"></div>
+          <div id="words" class="words-list" aria-live="polite" role="region" aria-label="Palavras a encontrar"></div>
           <div style="margin-top:25px;padding:15px;background:rgba(59, 130, 246, 0.1);border-radius:12px;border-left:4px solid var(--accent)">
                 <strong style="color:var(--accent)">💡 Dica:</strong>
                 <p style="margin-top:8px;color:var(--muted);font-size:0.85rem">
                     <strong>Atalhos:</strong> ESC = Pausar | H = Dica | F = Tela Cheia
                 </p>
             </div>
-            <div id="achievementsDisplay" style="margin-top:15px"></div>
+            <div id="achievementsDisplay" style="margin-top:15px" aria-live="polite"></div>
         </div>
       </div>
     </section>
-
     <section class="card screen" id="resultsScreen">
         <h2 style="font-size:2rem;text-align:center;margin-bottom:10px">🎉 FIM DE JOGO!</h2>
-
         <div id="finalGameStats" style="text-align:center;margin-bottom:20px;padding:20px;background:rgba(16, 185, 129, 0.1);border-radius:15px;border:2px solid var(--success)">
             <h3 style="color:var(--success);margin-bottom:10px">Seu Desempenho</h3>
             <p style="font-size:1.1rem;font-weight:600">Pontos Totais da Sessão: <span style="color:var(--accent);font-size:1.5rem" id="finalSessionScore">0</span></p>
             <p style="font-size:1.1rem;font-weight:600">Tempo de Último Nível: <span style="color:var(--accent);font-size:1.5rem" id="finalLastLevelTime">0.00s</span></p>
+            <p id="rankInfo" style="display:none">🌟 Sua posição no ranking: <span id="playerRank">-</span>º</p>
         </div>
-
         <div class="results-section">
             <h3 style="display:flex;align-items:center;gap:10px">📊 Suas Estatísticas</h3>
-            <div id="resultsStatsGrid" class="stats-grid">
-                </div>
+            <div id="resultsStatsGrid" class="stats-grid"></div>
             <div style="margin-top:30px">
                 <h4 style="color:var(--primary);margin-bottom:10px;font-size:1.2rem">🏆 Conquistas Desbloqueadas</h4>
                 <div id="resultsAchievementsDisplay" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center"></div>
             </div>
         </div>
-
         <div class="results-section">
             <h3 style="display:flex;align-items:center;gap:10px">🏆 Ranking Nacional</h3>
-            <div id="resultsLeaderboardStatus" style="color:var(--muted);font-size:0.9rem;margin-top:10px">Carregando ranking...</div>
-            <ul id="resultsLeaderboardList" class="leaderboard-list"></ul>
+            <div id="resultsLeaderboardStatus" style="color:var(--muted);font-size:0.9rem;margin-top:10px" aria-live="polite">Carregando ranking...</div>
+            <ul id="resultsLeaderboardList" class="leaderboard-list" aria-live="polite"></ul>
             <button id="refreshLeaderboardResults" style="margin-top:15px;background:var(--accent);color:white;padding:10px 20px;border-radius:8px;width:100%;cursor:pointer">🔄 Atualizar Ranking</button>
         </div>
-
         <div class="results-section">
             <h3 style="display:flex;align-items:center;gap:10px">📜 Histórico de Partidas</h3>
-            <ul id="resultsHistoryList" class="history-list"></ul>
+            <ul id="resultsHistoryList" class="history-list" aria-live="polite"></ul>
             <button onclick="clearHistoryResults()" style="background:var(--danger);color:white;padding:10px 20px;border-radius:8px;cursor:pointer;width:100%;margin-top:15px">🗑️ Limpar Histórico Completo</button>
         </div>
-
         <div class="results-buttons">
             <button style="background:linear-gradient(135deg, #10b981 0%, #059669 100%);color:white" onclick="startNewGameFromResults()">▶️ Novo Jogo</button>
             <button style="background:var(--muted);color:white" onclick="showScreen('registerScreen')">🏠 Tela Inicial</button>
         </div>
     </section>
-
     <div id="modalContainer"></div>
-
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
+    // 🔧 CONFIGURAÇÕES GLOBAIS
     const STORAGE_KEY = 'cadastros_ca';
     const HISTORY_KEY = 'game_history';
     const THEME_KEY = 'dark_mode';
     const PROGRESS_KEY = 'game_progress';
     const SOUND_KEY = 'sound_enabled';
-    // ⚠️ COLOQUE SEU URL DO APPS SCRIPT AQUI:
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRe-8oG7fyZEMjN6unJcw7QMFpzHOW6lg7dCgQrhX9D_uHq-IQMpbXLfIrTtKLBHxI/exec';
     const GAME_LEVELS = [
         { title: 'Infantil 1: Desenhos Animados', size: 10, words: ['MICKEY', 'ELSA', 'BOB', 'PEPPA', 'SONIC', 'PIKACHU', 'DORA', 'HULK'], difficulty: 'Infantil', color: '#ec4899', icon: '🎨', category: 'infantil' },
         { title: 'Infantil 2: Super Heróis', size: 10, words: ['BATMAN', 'CHAPOLIN', 'SUPERMAN', 'CAPITAO', 'MAGNETO', 'FLASH', 'THOR', 'PANTERA'], difficulty: 'Infantil', color: '#ec4899', icon: '🦸', category: 'infantil' },
-        { title: 'Infantil 3: Contos de Fadas', size: 11, words: ['CINDERELA', 'BRANCADENEVE', 'ARIEL', 'AURORA', 'FERA', 'PRINCESA', 'DRAGAO', 'CASTELO', 'MAGIA'], difficulty: 'Infantil', color: '#ec4899', icon: '👸', category: 'infantil' },
+        { title: 'Infantil 3: Contos de Fadas', size: 11, words: ['CINDERELA', 'FROZEN', 'ARIEL', 'AURORA', 'FERA', 'PRINCESA', 'DRAGAO', 'CASTELO', 'MAGIA'], difficulty: 'Infantil', color: '#ec4899', icon: '👸', category: 'infantil' },
         { title: 'Brasil 1: Forças Armadas', size: 12, words: ['BRASIL', 'AMAZONAS', 'MANAUS', 'POLICIA', 'SEGURANCA', 'FORCA', 'PATENTE', 'ALERTA', 'VIATURA', 'PATRIA'], difficulty: 'Fácil', color: '#10b981', icon: '🛡️', category: 'brasil' },
         { title: 'Brasil 2: Estados', size: 12, words: ['ACRE', 'BAHIA', 'CEARA', 'GOIAS', 'PARANA', 'PERNAMBUCO', 'RIOGRANDE', 'SERGIPE', 'TOCANTINS', 'MARANHAO'], difficulty: 'Fácil', color: '#10b981', icon: '🇧🇷', category: 'brasil' },
         { title: 'Brasil 3: Culinária', size: 13, words: ['FEIJOADA', 'ACARAJÉ', 'COXINHA', 'PÃODEQUEIJO', 'MOQUECA', 'BRIGADEIRO', 'FAROFA', 'TAPIOCA', 'AÇAÍ', 'CHURRASCO'], difficulty: 'Fácil', color: '#10b981', icon: '🍲', category: 'brasil' },
@@ -899,14 +940,11 @@
         { title: 'Mundo 2: Países', size: 16, words: ['BRASIL', 'ARGENTINA', 'PORTUGAL', 'ESPANHA', 'ALEMANHA', 'ITALIA', 'FRANCA', 'JAPAO', 'CHINA', 'AUSTRALIA', 'CANADA', 'MEXICO', 'INDIA', 'RUSSIA'], difficulty: 'Difícil', color: '#ef4444', icon: '🗺️', category: 'mundo' },
         { title: 'Mundo 3: Idiomas', size: 17, words: ['PORTUGUES', 'INGLES', 'ESPANHOL', 'FRANCES', 'ALEMAO', 'ITALIANO', 'RUSSO', 'CHINES', 'JAPONES', 'ARABE', 'COREANO', 'GREGO', 'LATIM', 'HEBRAICO'], difficulty: 'Difícil', color: '#ef4444', icon: '🗣️', category: 'mundo' },
         { title: 'Mundo 4: Capitais', size: 17, words: ['LONDRES', 'PARIS', 'ROMA', 'BERLIM', 'TOKIO', 'PEQUIM', 'MOSCOU', 'OTTAWA', 'MEXICO', 'LIMA', 'SANTIAGO', 'BUENOSAIRES', 'CANBERRA', 'PRETORIA'], difficulty: 'Difícil', color: '#ef4444', icon: '🏙️', category: 'mundo' },
-        
-        // NOVOS NÍVEIS BÍBLIA
         { title: 'Bíblia 1: Livros do Pentateuco', size: 15, words: ['GÊNESIS', 'ÊXODO', 'LEVÍTICO', 'NÚMEROS', 'DEUTERONÔMIO'], difficulty: 'Bíblia', color: '#3b82f6', icon: '📖', category: 'biblia' },
         { title: 'Bíblia 2: Personagens do Velho Testamento', size: 17, words: ['ABRAÃO', 'MOISÉS', 'NOÉ', 'ISAQUE', 'JACÓ', 'JOSÉ', 'DAVI', 'ELIAS', 'RUTE'], difficulty: 'Bíblia', color: '#3b82f6', icon: '🧔', category: 'biblia' },
         { title: 'Bíblia 3: Personagens do Novo Testamento', size: 18, words: ['JESUS', 'PAULO', 'PEDRO', 'JOÃO', 'MARIA', 'JUDAS', 'MATEUS', 'LUCAS', 'MARCOS', 'TITO'], difficulty: 'Bíblia', color: '#3b82f6', icon: '😇', category: 'biblia' },
         { title: 'Bíblia 4: Cidades e Lugares', size: 19, words: ['JERUSALÉM', 'BELÉM', 'NAZARÉ', 'JERICÓ', 'GALILEIA', 'ISRAEL', 'JORDÃO', 'EGITO', 'EDEN'], difficulty: 'Bíblia', color: '#3b82f6', icon: '🕍', category: 'biblia' },
         { title: 'Bíblia 5: Conceitos e Termos', size: 20, words: ['SALVAÇÃO', 'EVANGELHO', 'FÉ', 'GRAÇA', 'AMOR', 'ORAÇÃO', 'CÉU', 'INFERNO', 'LIVRO', 'PALAVRA'], difficulty: 'Bíblia', color: '#3b82f6', icon: '🙏', category: 'biblia' },
-
         { title: 'Natureza 1: Animais', size: 18, words: ['ELEFANTE', 'RINOCERONTE', 'HIPOPOTAMO', 'GIRAFA', 'LEOPARDO', 'CROCODILO', 'TUBARAO', 'AGUIA', 'PINGUIM', 'GOLFINHO', 'BORBOLETA', 'FORMIGA', 'CACHORRO', 'TARTARUGA'], difficulty: 'Muito Difícil', color: '#8b5cf6', icon: '🦁', category: 'natureza' },
         { title: 'Natureza 2: Flores', size: 18, words: ['ORQUIDEA', 'GIRASSOL', 'MARGARIDA', 'TULIPA', 'JASMIM', 'LAVANDA', 'HORTENCIA', 'AZALEIA', 'BEGONIA', 'CRISANTEMO', 'DALIA', 'GARDENIA', 'HIBISCO', 'PETUNIA'], difficulty: 'Muito Difícil', color: '#8b5cf6', icon: '🌺', category: 'natureza' },
         { title: 'Natureza 3: Clima', size: 19, words: ['TEMPESTADE', 'FURACAO', 'TSUNAMI', 'TERREMOTO', 'VULCAO', 'GEADA', 'TROVOADA', 'VENTANIA', 'CHUVA', 'SOL', 'NEVE', 'GRANIZO', 'NUVEM', 'ARCOIRIS', 'UMIDADE'], difficulty: 'Muito Difícil', color: '#8b5cf6', icon: '☀️', category: 'natureza' },
@@ -915,12 +953,14 @@
         { title: 'Extremo 3: Química', size: 21, words: ['ELETRONEGATIVIDADE', 'ESTEQUIOMETRIA', 'TERMODINAMICA', 'FOTOQUIMICA', 'CRISTALOGRAFIA', 'CROMATOGRAFIA', 'POLIMERO', 'CATALISADOR', 'REACAO', 'ATOMO', 'MOLECULA', 'ISOTOPO', 'ELETRON', 'PROTON', 'NEUTRO'], difficulty: 'Extremo', color: '#dc2626', icon: '🧪', category: 'extremo' },
         { title: 'Extremo 4: Geopolítica', size: 21, words: ['GEOPOLITICA', 'DIPLOMACIA', 'SOBERANIA', 'NACIONALISMO', 'GLOBALIZACAO', 'IDEOLOGIA', 'TERRORISMO', 'GUERRA', 'PAZ', 'ONU', 'OTAN', 'UNIAOEUROPEIA', 'MERCOSUL', 'CONFLITO', 'ACORDO'], difficulty: 'Extremo', color: '#dc2626', icon: '🌐', category: 'extremo' }
     ];
+
+    // 🧠 VARIÁVEIS DE JOGO (declaradas UMA ÚNICA VEZ)
     let GRID_SIZE = GAME_LEVELS[0].size;
     let WORDS = GAME_LEVELS[0].words;
     let currentRowId = null; 
     let startTime = null;
     let timerInterval = null;
-    let currentUserName = 'Convidado'; // Ajustado para 'Não Identificado' na função openGame
+    let currentUserName = 'Convidado';
     let currentLevel = 0;
     let isPaused = false;
     let hintsRemaining = 3;
@@ -940,9 +980,11 @@
     let placedWords = [];
     let selection = null;
     let found = new Set();
-    let lastLevelTimeTaken = 0; // Armazena o tempo do último nível
-    let hasCompletedLevelOne = false; // NOVA VARIÁVEL: Para controle do ranking
+    let lastLevelTimeTaken = 0;
+    let hasCompletedLevelOne = false;
+    let playerStars = 0;
 
+    // ✨ UTILITÁRIOS
     const $ = id => document.getElementById(id);
     const sounds = {
         click: () => playBeep(800, 0.1, 0.05),
@@ -960,6 +1002,7 @@
         }
     };
 
+    // 🔊 ÁUDIO
     function playBeep(frequency, duration, volume) {
         if (!soundEnabled) return;
         try {
@@ -979,7 +1022,18 @@
         }
     }
 
-    /* FLUXO DE TELAS */
+    // ⭐ Nova função: calcular estrelas (1 a 3)
+    function calculateStars(timeTaken, hintsUsed, accuracy) {
+        if (isZenMode) return 0;
+        let stars = 0;
+        if (timeTaken <= 30) stars++;
+        if (timeTaken <= 60) stars++;
+        if (hintsUsed === 0) stars++;
+        if (accuracy >= 90) stars++;
+        return Math.min(3, stars);
+    }
+
+    // 🖥️ CONTROLE DE TELAS
     function showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
@@ -987,9 +1041,8 @@
         $(screenId).classList.add('active');
         window.scrollTo({top: 0, behavior: 'smooth'});
         if (screenId === 'registerScreen') {
-            stopTimer(); // Garante que o timer para na tela inicial
-            currentRowId = null; // Reseta o ID da sessão
-            // Recarrega o ranking sempre que volta para a tela inicial
+            stopTimer();
+            currentRowId = null;
             loadLeaderboard();
         }
         if (screenId === 'resultsScreen') {
@@ -998,22 +1051,28 @@
     }
 
     function loadResultsScreen() {
-        // 1. Estatísticas da Sessão
         $('finalSessionScore').textContent = totalScore;
         $('finalLastLevelTime').textContent = isZenMode ? '♾️ Zen' : `${lastLevelTimeTaken.toFixed(2)}s`;
-
-        // 2. Ranking Nacional - Só exibe se o Nível 1 tiver sido concluído na sessão atual ou em alguma anterior
         const history = loadGameHistory();
         hasCompletedLevelOne = history.some(g => g.level === 0 && g.completed);
-        
         if (hasCompletedLevelOne) {
-             loadLeaderboard('results'); // Carrega ranking na tela de resultados
+            loadLeaderboard('results');
         } else {
             $('resultsLeaderboardStatus').textContent = '⚠️ Conclua o Nível 1 para entrar no Ranking Nacional!';
             $('resultsLeaderboardList').innerHTML = '<li class="leaderboard-item">Ranking indisponível até a conclusão do primeiro nível.</li>';
         }
 
-        // 3. Estatísticas Pessoais e Conquistas
+        // Mostrar posição no ranking (se aplicável)
+        const myRank = history.length > 0 && hasCompletedLevelOne 
+            ? history.filter(h => h.level === 0 && h.completed).length
+            : 0;
+        if (myRank > 0) {
+            $('rankInfo').style.display = 'block';
+            $('playerRank').textContent = myRank;
+        } else {
+            $('rankInfo').style.display = 'none';
+        }
+
         const progress = loadProgress();
         const totalGames = history.length;
         const completedGames = history.filter(g => g.completed).length;
@@ -1021,8 +1080,6 @@
         const avgTime = totalGames > 0 ? (totalTime / totalGames).toFixed(2) : 0;
         const bestTime = history.length > 0 ? Math.min(...history.filter(g => g.time > 0 && g.completed).map(g => g.time || 999)).toFixed(2) : 0;
         const accuracy = totalSelections > 0 ? (correctSelections / totalSelections * 100).toFixed(1) : 100;
-        
-        // Renderizar Cards de Estatísticas
         $('resultsStatsGrid').innerHTML = `
             <div class="stat-card"><div class="stat-value">${totalGames}</div><div class="stat-label">Partidas Jogadas</div></div>
             <div class="stat-card"><div class="stat-value">${completedGames}</div><div class="stat-label">Completadas</div></div>
@@ -1031,22 +1088,20 @@
             <div class="stat-card"><div class="stat-value">${bestTime}s</div><div class="stat-label">Melhor Tempo</div></div>
             <div class="stat-card"><div class="stat-value">${accuracy}%</div><div class="stat-label">Precisão</div></div>
         `;
-        
-        // Renderizar Conquistas
         if (achievements.length === 0) {
             $('resultsAchievementsDisplay').innerHTML = '<div class="empty-state"><p style="color:var(--muted)">Jogue para desbloquear conquistas!</p></div>';
         } else {
             $('resultsAchievementsDisplay').innerHTML = achievements.map(ach => `<div class="achievement-badge">${ach.icon} ${ach.title}</div>`).join('');
         }
-
-        // 4. Histórico de Partidas
-        const htmlHistory = history.slice(0, 10).map(game => { // Exibe os 10 mais recentes
+        const htmlHistory = history.slice(0, 10).map(game => {
             const date = new Date(game.date);
             const dateStr = date.toLocaleDateString('pt-BR');
             const timeStr = date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
             const levelInfo = GAME_LEVELS[game.level] || GAME_LEVELS[0];
             const completionClass = game.completed ? 'complete' : 'incomplete';
             const completionText = game.completed ? '✅ Completo' : (game.foundWords > 0 ? '⚠️ Incompleto' : '❌ Desistiu');
+            const stars = game.stars || 0;
+            const starsDisplay = '⭐'.repeat(stars).padEnd(3, '☆');
             return `
                 <li class="history-item ${completionClass}">
                     <div class="history-icon">${game.completed ? '✅' : '❌'}</div>
@@ -1054,10 +1109,11 @@
                         <h4>${levelInfo.title} (${game.playerName})</h4>
                         <p>${game.foundWords}/${game.totalWords} palavras • ${game.score || 0} pts • ${completionText}
                             ${game.zenMode ? ' • <span class="zen-badge" style="font-size:0.8rem;padding:3px 8px">🧘 Zen</span>' : ''}
+                            <br><span class="stars">${starsDisplay}</span>
                         </p>
                         <p style="font-size:0.85rem">${dateStr} às ${timeStr}</p>
                     </div>
-                    <div class="history-time">${game.zenMode ? '♾️' : game.time ? game.time.toFixed(2) + 's' : '-'}</div>
+                    <div class="history-time">${game.zenMode ? '_FILENO' : game.time ? game.time.toFixed(2) + 's' : '-'}</div>
                 </li>
             `;
         }).join('');
@@ -1073,16 +1129,15 @@
         sounds.levelUp();
     }
 
-    // Adaptando funções que abriam modais para usar a tela de resultados ou novos modais simplificados
     function clearHistoryResults() {
-        if (confirm('🗑️ Deseja realmente limpar todo o histórico de partidas?')) {
+        if (confirm('🗑️ Deseja realmente limpar todo o histórico de partidas?\nSeus dados locais (incluindo nome e partidas) serão apagados permanentemente.')) {
             localStorage.removeItem(HISTORY_KEY);
             showToast('🗑️ Histórico limpo com sucesso!', 'success');
-            loadResultsScreen(); // Recarrega a tela de resultados
+            loadResultsScreen();
         }
     }
-    /* FIM FLUXO DE TELAS */
 
+    // 🌓 TEMAS & SOM
     function loadTheme() {
         const isDark = localStorage.getItem(THEME_KEY) === 'true';
         if (isDark) {
@@ -1117,6 +1172,7 @@
         }
     }
 
+    // 🎮 LÓGICA DE PONTUAÇÃO E JOGO
     function calculateScore(timeTaken, hintsUsed, level) {
         const baseScore = 1000;
         const timeBonus = Math.max(0, 500 - timeTaken * 2);
@@ -1203,6 +1259,7 @@
             achievements.map(ach => `<span class="achievement-badge">${ach.icon} ${ach.title}</span>`).join('');
     }
 
+    // 📁 SALVAMENTO LOCAL
     function saveGameHistory(data) {
         try {
             const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
@@ -1222,7 +1279,6 @@
         }
     }
 
-    // Funções modais mantidas para Pausa e Seleção de Níveis, mas simplificadas/modificadas.
     function loadHistoryModal() {
         const history = loadGameHistory();
         const overlay = document.createElement('div');
@@ -1251,6 +1307,8 @@
                         const levelInfo = GAME_LEVELS[game.level] || GAME_LEVELS[0];
                         const completionClass = game.completed ? 'complete' : 'incomplete';
                         const completionText = game.completed ? '✅ Completo' : (game.foundWords > 0 ? '⚠️ Incompleto' : '❌ Desistiu');
+                        const stars = game.stars || 0;
+                        const starsDisplay = '⭐'.repeat(stars).padEnd(3, '☆');
                         return `
                             <li class="history-item ${completionClass}">
                                 <div class="history-icon">${game.completed ? '✅' : '❌'}</div>
@@ -1258,10 +1316,11 @@
                                     <h4>${levelInfo.title}</h4>
                                     <p>${game.playerName} • ${game.foundWords}/${game.totalWords} palavras • ${game.score || 0} pts • ${completionText}
                                         ${game.zenMode ? ' • <span class="zen-badge" style="font-size:0.8rem;padding:3px 8px">🧘 Zen</span>' : ''}
+                                        <br><span class="stars">${starsDisplay}</span>
                                     </p>
                                     <p style="font-size:0.85rem">${dateStr} às ${timeStr}</p>
                                 </div>
-                                <div class="history-time">${game.zenMode ? '♾️' : game.time ? game.time.toFixed(2) + 's' : '-'}</div>
+                                <div class="history-time">${game.zenMode ? '_FILENO' : game.time ? game.time.toFixed(2) + 's' : '-'}</div>
                             </li>
                         `;
                     }).join('')}
@@ -1271,7 +1330,7 @@
         overlay.appendChild(modal);
         $('modalContainer').appendChild(overlay);
     }
-    
+
     function clearHistoryModal() {
         if (confirm('🗑️ Deseja realmente limpar todo o histórico de partidas?')) {
             localStorage.removeItem(HISTORY_KEY);
@@ -1279,7 +1338,6 @@
             showToast('🗑️ Histórico limpo com sucesso!', 'success');
         }
     }
-
 
     function saveProgress() {
         try {
@@ -1303,13 +1361,14 @@
         }
     }
 
+    // 🎯 CONTROLE DE NÍVEIS
     function showLevelSelector() {
         if (isPaused) {
             showToast('⚠️ Despause o jogo para ver os níveis!', 'warning');
             sounds.error();
             return;
         }
-        pauseGame(); // Pausa o jogo ao abrir o seletor
+        pauseGame();
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.id = 'levelModal';
@@ -1321,7 +1380,7 @@
             brasil: { name: 'Brasil', icon: '🇧🇷', levels: [] },
             tecnologia: { name: 'Tecnologia', icon: '💻', levels: [] },
             mundo: { name: 'Mundo', icon: '🌍', levels: [] },
-            biblia: { name: 'Bíblia', icon: '🙏', levels: [] }, // NOVA CATEGORIA
+            biblia: { name: 'Bíblia', icon: '🙏', levels: [] },
             natureza: { name: 'Natureza', icon: '🌿', levels: [] },
             extremo: { name: 'Extremo', icon: '🔥', levels: [] }
         };
@@ -1373,22 +1432,13 @@
 
     function selectLevel(levelIndex) {
         closeModal('levelModal');
-        // Finaliza o jogo atual antes de iniciar um novo
-        handleLevelEnd(false, true); // true para 'changingLevel'
-        
+        handleLevelEnd(false, true);
         currentLevel = levelIndex;
-        // Reinicia a sessão de jogo (score e timer para o novo nível)
         resetGameSession();
-        // Recria o grid e a lista de palavras para o novo nível
         initGame(currentLevel);
         showToast(`🎮 ${GAME_LEVELS[levelIndex].title} iniciado!`, 'success');
         sounds.click();
-        
-        // Garante que o timer inicie/continue (se não estiver em modo zen)
         if (!isZenMode) startTimer();
-
-        // Se o nível selecionado não for o primeiro, o currentRowId é resetado 
-        // para evitar o envio de pontuação de ranking (que só vale para o Nível 1).
         if (currentLevel !== 0) {
             currentRowId = null;
         }
@@ -1399,7 +1449,7 @@
         if (enabled) {
             $('zenBadge').style.display = 'inline-flex';
             stopTimer();
-            $('timeDisplay').textContent = '♾️ Zen';
+            $('timeDisplay').textContent = '_FILENO Zen';
         } else {
             $('zenBadge').style.display = 'none';
             if (startTime) startTimer();
@@ -1421,6 +1471,7 @@
     window.selectLevel = selectLevel;
     window.toggleZenMode = toggleZenMode;
 
+    // 📘 TUTORIAL
     function showTutorial() {
         const overlay = document.createElement('div');
         overlay.className = 'tutorial-overlay';
@@ -1451,7 +1502,6 @@
         `;
         overlay.appendChild(content);
         document.body.appendChild(overlay);
-        // Garante que o tutorial esteja visível por cima de tudo
         overlay.style.zIndex = 1002;
     }
 
@@ -1463,6 +1513,7 @@
 
     window.closeTutorial = closeTutorial;
 
+    // 📤 INTEGRAÇÃO COM PLANILHA
     function nowLocalDateTimeForInput(){
       const d = new Date();
       const off = d.getTimezoneOffset();
@@ -1472,8 +1523,6 @@
 
     async function postData(data) {
       try {
-        console.log('Enviando dados para:', APPS_SCRIPT_URL);
-        console.log('Dados:', JSON.stringify(data));
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -1482,10 +1531,6 @@
           }, 
           body: JSON.stringify(data)
         });
-        console.log('Dados enviados com sucesso');
-        // Como o modo é 'no-cors', a resposta real não pode ser lida, mas assumimos sucesso.
-        // Se precisar do rowId, é necessário configurar o App Script para usar ContentService e retornar JSON.
-        // A lógica de rowId do código original é mantida por garantia, mas pode falhar em 'no-cors'.
         return data.type === 'registerAndGame' ? { status: 'success', message: 'Enviado', rowId: Math.random().toString(36).substring(2, 9) } : { status: 'success', message: 'Enviado' };
       } catch (error) {
         console.error('Erro ao enviar dados:', error);
@@ -1507,7 +1552,6 @@
     function saveEntries(arr){
       try{
         localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-        console.log('Entradas salvas localmente:', arr);
       }catch(e){
         console.error('Erro ao salvar entradas:', e);
       }
@@ -1524,19 +1568,15 @@
     }
 
     async function loadLeaderboard(target = 'initial'){
-        // Lógica de ranking: Só exibe se o Nível 1 tiver sido concluído em algum momento.
         const history = loadGameHistory();
         hasCompletedLevelOne = history.some(g => g.level === 0 && g.completed);
-
         const statusEl = target === 'initial' ? $('leaderboardStatus') : $('resultsLeaderboardStatus');
         const listEl = target === 'initial' ? $('leaderboardList') : $('resultsLeaderboardList');
-        
         if (!hasCompletedLevelOne) {
             statusEl.textContent = '⚠️ Conclua o Nível 1 para entrar no Ranking Nacional!';
             listEl.innerHTML = '<li class="leaderboard-item">Ranking indisponível até a conclusão do primeiro nível.</li>';
             return;
         }
-
         statusEl.textContent = '⏳ Carregando ranking...';
         listEl.innerHTML = '<li class="leaderboard-item">Carregando...</li>';
         try {
@@ -1564,6 +1604,7 @@
         }
     }
 
+    // 🍞 TOASTS E EFEITOS
     function showToast(message, type = 'success'){
         const toast = document.createElement('div');
         toast.className = 'toast';
@@ -1608,9 +1649,10 @@
         }
     }
 
+    // ⏱️ CONTROLE DE TEMPO
     function startTimer(){
         if(isZenMode) {
-            $('timeDisplay').textContent = '♾️ Zen';
+            $('timeDisplay').textContent = '_FILENO Zen';
             return;
         }
         if(timerInterval) clearInterval(timerInterval);
@@ -1662,16 +1704,18 @@
         showToast('▶️ Jogo retomado!', 'success');
         sounds.click();
     }
-    
-    // NOVA FUNÇÃO para lidar com o fim de um nível (completo, desistido ou pulado)
+
     function handleLevelEnd(completed, changingLevel = false) {
         stopTimer();
         const timeTakenSeconds = isZenMode ? 0 : ((Date.now() - startTime) / 1000);
         lastLevelTimeTaken = timeTakenSeconds;
-        
         const currentLevelData = GAME_LEVELS[currentLevel];
         const levelScore = completed ? calculateScore(timeTakenSeconds, 3 - hintsRemaining, currentLevel) : 0;
-        
+
+        // ⭐ Calcular estrelas
+        const accuracy = totalSelections > 0 ? (correctSelections / totalSelections * 100) : 100;
+        playerStars = completed ? calculateStars(timeTakenSeconds, 3 - hintsRemaining, accuracy) : 0;
+
         if (completed) {
             updateScore(levelScore);
             checkAchievements();
@@ -1680,7 +1724,7 @@
                 saveProgress();
             }
         }
-        
+
         saveGameHistory({
             level: currentLevel,
             playerName: currentUserName,
@@ -1689,10 +1733,10 @@
             time: timeTakenSeconds,
             completed: completed,
             zenMode: isZenMode,
-            score: levelScore // Pontos ganhos neste nível
+            score: levelScore,
+            stars: playerStars // ⭐ Salvar estrelas
         });
-        
-        // Lógica de envio para o Ranking (Google Sheets): SOMENTE para o Nível 1 CONCLUÍDO
+
         if (completed && currentLevel === 0 && currentRowId && !isZenMode) {
             const gameData = {
                 type: 'gameFinished',
@@ -1700,23 +1744,21 @@
                 foundCount: found.size,
                 timeTakenSeconds: parseFloat(timeTakenSeconds.toFixed(2)),
                 playerName: currentUserName,
-                score: totalScore, // Score total da sessão
-                completed: true
+                score: totalScore,
+                completed: true,
+                stars: playerStars
             };
-            console.log('Enviando resultado do Nível 1 CONCLUÍDO para o Ranking:', gameData);
             postData(gameData).then(() => {
                 loadLeaderboard();
             }).catch(err => {
                 console.error('Erro ao enviar resultado:', err);
             });
-            currentRowId = null; // Encerra a sessão de registro para o ranking
-            hasCompletedLevelOne = true; // Define para que o ranking possa ser visualizado
+            currentRowId = null;
+            hasCompletedLevelOne = true;
         } else if (!completed && currentLevel === 0 && currentRowId) {
-            // Se desistiu/pulou do Nível 1 antes de terminar, também encerra a sessão
             currentRowId = null;
         }
 
-        // Se estiver apenas mudando de nível, não mostra a tela de resultados/fim
         if (!changingLevel) {
             setTimeout(() => {
                 showScreen('resultsScreen');
@@ -1729,11 +1771,7 @@
         if (!confirm('⏭️ Tem certeza que deseja pular este nível? Você não receberá pontos!')) {
             return;
         }
-        
-        // 1. Finaliza o nível atual (sem pontuar e sem marcar como concluído)
-        handleLevelEnd(false, true); // true para 'changingLevel'
-        
-        // 2. Tenta ir para o próximo nível
+        handleLevelEnd(false, true);
         const nextLevel = currentLevel + 1;
         if (nextLevel < GAME_LEVELS.length) {
             currentLevel = nextLevel;
@@ -1742,13 +1780,12 @@
                 saveProgress();
             }
             initGame(currentLevel);
-            resetGameSession(); // Reseta score do nível, combo, etc.
+            resetGameSession();
             showToast(`⏭️ Nível pulado. Iniciando Nível ${currentLevel + 1}!`, 'warning');
             sounds.click();
         } else {
             showToast(`🎉 Você pulou todos os níveis. Fim de Jogo!`, 'success');
             sounds.levelUp();
-            // Vai para a tela de resultados
             setTimeout(() => {
                 showScreen('resultsScreen');
             }, 2000);
@@ -1760,11 +1797,7 @@
         if (!confirm('❌ Tem certeza que deseja desistir deste nível? Você perderá o progresso do nível!')) {
             return;
         }
-        
-        // 1. Finaliza o nível atual (sem pontuar e sem marcar como concluído)
-        handleLevelEnd(false, false); // false para 'changingLevel'
-
-        // 2. Vai para a tela de resultados/seleção de nível
+        handleLevelEnd(false, false);
         showToast(`❌ Nível desistido. Veja seus resultados.`, 'error');
         sounds.error();
     }
@@ -1774,14 +1807,10 @@
         if (!confirm('⏹️ Deseja finalizar o jogo e retornar para a tela de resultados?')) {
             return;
         }
-        
-        // 1. Finaliza o nível atual (sem pontuar e sem marcar como concluído)
-        handleLevelEnd(false, false); // false para 'changingLevel'
-
+        handleLevelEnd(false, false);
         showToast('⏹️ Jogo finalizado. Resultados!', 'success');
         sounds.click();
     }
-
 
     function giveHint(){
         if(isPaused) return;
@@ -1830,6 +1859,7 @@
         if (!isZenMode) startTimer();
     }
 
+    // ⌨️ TECLADO E VISIBILIDADE
     document.addEventListener('keydown', (e) => {
         if(!$('gameScreen') || !$('gameScreen').classList.contains('active')) return;
         if(e.key === 'Escape') {
@@ -1853,6 +1883,7 @@
         }
     });
 
+    // 🚀 INICIALIZAÇÃO
     document.addEventListener('DOMContentLoaded', () => {
         console.log('Documento carregado');
         loadTheme();
@@ -1862,33 +1893,27 @@
         $('soundToggle').textContent = soundEnabled ? '🔊' : '🔇';
         $('datetime').value = nowLocalDateTimeForInput();
         updateUIEntries();
-        loadLeaderboard(); // Carrega ranking inicial
-
+        loadLeaderboard();
         if(!localStorage.getItem('tutorial_shown')) {
             setTimeout(showTutorial, 1000);
         }
-
-        // Event Listeners Globais
         $('themeToggle').addEventListener('click', toggleTheme);
         $('soundToggle').addEventListener('click', toggleSound);
         $('fullscreenToggle').addEventListener('click', toggleFullscreen);
-
-        // Event Listeners TELA INICIAL/REGISTRO
         $('historyBtnInitial').addEventListener('click', loadHistoryModal);
         $('statsBtnInitial').addEventListener('click', () => showScreen('resultsScreen'));
         $('clearBtnInitial').addEventListener('click', () => {
-             if(confirm('❌ Apagar todos os registros do navegador?')){
+             if(confirm('❌ Apagar todos os registros do navegador?\nSeus dados locais serão removidos permanentemente. Isso inclui nome, histórico e progresso.')){
                 localStorage.removeItem(STORAGE_KEY);
                 localStorage.removeItem(PROGRESS_KEY);
                 localStorage.removeItem(HISTORY_KEY);
                 updateUIEntries();
                 showToast('🗑️ Dados locais removidos', 'success');
                 sounds.click();
-                loadResultsScreen(); // Recarrega tela de resultados para refletir a limpeza
+                loadResultsScreen();
              }
         });
         $('refreshLeaderboard').addEventListener('click', () => loadLeaderboard('initial'));
-        
         $('cadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nome = $('nome').value.trim();
@@ -1914,48 +1939,42 @@
                 const result = await postData(dataToSend);
                 if(result && result.rowId) {
                     currentRowId = result.rowId;
-                    console.log('ID da linha recebido:', currentRowId);
                     showToast('✅ Dados enviados! Jogo iniciado!', 'success');
                 } else {
-                    // Simulação para o caso de no-cors, onde o ID não retorna
                     currentRowId = `local_${Date.now()}`;
                     showToast('⚠️ Dados salvos localmente. Verifique planilha.', 'warning');
                 }
             } catch(error) {
                 console.error('Erro ao enviar dados:', error);
                 showToast('⚠️ Erro no envio. Dados salvos localmente.', 'warning');
-                currentRowId = `local_${Date.now()}`; // Garante um ID local para o Nível 1
+                currentRowId = `local_${Date.now()}`;
             }
-            openGame(nome); // Abre TELA 2
+            openGame(nome);
             $('cadForm').reset();
             $('datetime').value = nowLocalDateTimeForInput();
             if(soundEnabled) sounds.success();
         });
-        
         $('openGameBtn').addEventListener('click', () => {
-            // AJUSTE: Mudar a identificação para "Não Identificado"
-            openGame('Não Identificado'); // Abre TELA 2. currentRowId será null.
+            openGame('Não Identificado');
             sounds.click();
         });
-
-        // Event Listeners TELA JOGO
         $('pauseBtn').addEventListener('click', () => {
             if(isPaused) resumeGame();
             else pauseGame();
         });
         $('hintBtn').addEventListener('click', giveHint);
-        $('skipLevelBtn').addEventListener('click', skipLevel); // NOVO LISTENER
+        $('skipLevelBtn').addEventListener('click', skipLevel);
         $('giveUpBtn').addEventListener('click', giveUpGame);
         $('endGameBtn').addEventListener('click', endGame);
         $('levelsBtn').addEventListener('click', () => {
             showLevelSelector();
             sounds.click();
         });
-
-        // Event Listeners TELA RESULTADOS
         $('refreshLeaderboardResults').addEventListener('click', () => loadLeaderboard('results'));
 
-        // Configuração inicial para mostrar a TELA 1
+        // ✅ Listener único para compartilhamento
+        $('shareResultsBtn').addEventListener('click', shareResults);
+
         showScreen('registerScreen');
     });
 
@@ -1963,11 +1982,12 @@
     window.startNewGameFromResults = startNewGameFromResults;
     window.showScreen = showScreen;
 
+    // 🎮 LÓGICA PRINCIPAL DO JOGO
     function openGame(nome){
         showScreen('gameScreen');
-        currentUserName = nome; // Nome do jogador é definido aqui
+        currentUserName = nome;
         currentLevel = 0;
-        totalScore = 0; // Zera o score da sessão ao iniciar um novo jogo
+        totalScore = 0;
         resetGameSession();
         sessionStart = Date.now();
         if (isZenMode) $('zenBadge').style.display = 'inline-flex';
@@ -2003,13 +2023,12 @@
         updateFoundCount();
         updateProgressBar();
         updateAccuracy();
-        // A lógica de iniciar o timer está em `resetGameSession` e `selectLevel`
     }
 
     function placeWord(word){
         const w = word.toUpperCase();
         const directions = [[0,1], [1,0], [1,1], [-1,1], [0,-1], [-1,0], [-1,-1], [1,-1]];
-        const maxAttempts = 500;
+        const maxAttempts = 1000;
         for(let attempt = 0; attempt < maxAttempts; attempt++){
             const dir = directions[Math.floor(Math.random() * directions.length)];
             const len = w.length;
@@ -2036,6 +2055,13 @@
             }
             placedWords.push({word: w, r, c, dr: dir[0], dc: dir[1], len});
             return true;
+        }
+        const fallbacks = ['ELSA', 'JASMIM', 'MOANA', 'MERIDA', 'TIANA'];
+        for (const fb of fallbacks) {
+            if (placeWord(fb)) {
+                placedWords[placedWords.length - 1].original = word;
+                return true;
+            }
         }
         placedWords.push({word: w, notPlaced: true});
         return false;
@@ -2066,15 +2092,14 @@
         const node = $('words');
         node.innerHTML = '';
         const currentLevelData = GAME_LEVELS[currentLevel];
-        // Renderiza palavras originais (com acentos) na lista, mas a lógica de busca usa a versão sem acentos
-        const wordsToDisplay = currentLevelData.words;
-        for(const w of wordsToDisplay){
-            // Cria um ID baseado na versão sem acentos para o controle da busca
-            const idKey = 'word_' + w.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        for(const w of currentLevelData.words){
+            const clean = w.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            const idKey = 'word_' + clean;
             const div = document.createElement('div');
             div.className = 'word';
             div.textContent = w.toUpperCase();
             div.id = idKey;
+            div.setAttribute('aria-label', 'Palavra: ' + w);
             node.appendChild(div);
         }
     }
@@ -2113,7 +2138,6 @@
                 const el = document.querySelector(`.cell[data-r='${rr}'][data-c='${cc}']`);
                 if(el) el.classList.add('found');
             }
-            // Usa a versão sem acentos para encontrar o elemento na lista
             const wel = $('word_' + pw.word);
             if(wel) wel.classList.add('found');
         }
@@ -2199,9 +2223,14 @@
         $('accuracyDisplay').textContent = accuracy + '%';
     }
 
-    function moveToNextLevel(){
-        handleLevelEnd(true, true); // Nível concluído, mudando de nível
+    function checkWin(){
+        if(found.size === placedWords.length){
+            moveToNextLevel();
+        }
+    }
 
+    function moveToNextLevel(){
+        handleLevelEnd(true, true);
         currentLevel++;
         if(currentLevel < GAME_LEVELS.length){
             showToast(`🎉 Nível ${currentLevel} completo! Partiu Nível ${currentLevel + 1}!`, 'success');
@@ -2216,18 +2245,84 @@
             createConfetti();
             sounds.levelUp();
             stopTimer();
-            // Vai para a tela de resultados
             setTimeout(() => {
                 showScreen('resultsScreen');
             }, 2000);
         }
     }
 
-    function checkWin(){
-        if(found.size >= placedWords.length){
-            setTimeout(moveToNextLevel, 1000);
+    // 📤 COMPARTILHAMENTO DE RESULTADOS
+    async function shareResults() {
+        const element = $('resultsScreen');
+        if (!element) return;
+        try {
+            const canvas = await html2canvas(element, { scale: 1 });
+            canvas.toBlob(async (blob) => {
+                if (navigator.share && navigator.canShare({ files: [new File([blob], 'resultado.png', { type: 'image/png' })] })) {
+                    await navigator.share({
+                        title: 'Meu Resultado no Caça-Palavras!',
+                        text: 'Veja meu desempenho!',
+                        files: [new File([blob], 'resultado.png', { type: 'image/png' })]
+                    });
+                } else {
+                    const url = canvas.toDataURL();
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'caçapalavras_resultado.png';
+                    a.click();
+                    showToast('✅ Imagem salva!', 'success');
+                }
+            }, 'image/png');
+        } catch (e) {
+            console.error('Erro ao gerar imagem:', e);
+            showToast('⚠️ Não foi possível gerar imagem.', 'error');
         }
     }
+
+    // ⚙️ SERVICE WORKER (removido pois estava quebrado)
+    // Foi removido temporariamente para evitar erros. Pode ser reativado com um SW real.
+  </script>
+  <!-- Manifest inline para PWA -->
+  <script type="application/json" id="inline-manifest">
+  {
+    "name": "Caça-Palavras Premium",
+    "short_name": "Caça-Palavras",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#f8fafc",
+    "theme_color": "#667eea",
+    "icons": []
+  }
+  </script>
+  <script>
+    // Injeta o manifesto corretamente
+    const manifest = document.getElementById('inline-manifest');
+    const blob = new Blob([manifest.textContent], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = url;
+    document.head.appendChild(link);
   </script>
 </body>
 </html>
+
+
+    
+              <script>
+                                 let GRID_SIZE = GAME_LEVELS[0].size;
+   // ... outras variáveis ...
+   let hasCompletedLevelOne = false;
+
+   // ⚠️ E logo em seguida:
+   let GRID_SIZE = GAME_LEVELS[0].size;
+   // ... repetição de todas as variáveis ...
+   let playerStars = 0;
+   
+   navigator.serviceWorker.register('data:text/javascript,', { scope: './' });
+   
+
+              </script>
+                        </body>
+                        </html>
+                    
